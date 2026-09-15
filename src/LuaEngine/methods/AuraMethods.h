@@ -7,6 +7,11 @@
 #ifndef AURAMETHODS_H
 #define AURAMETHODS_H
 
+// SpellAuras.h (pulled in by ALEIncludes.h) only FORWARD-DECLARES AuraEffect,
+// so AuraEffect::GetAmount() is not a complete type without this. Needed by
+// GetEffectAmount below.
+#include "SpellAuraEffects.h"
+
 /***
  * The persistent effect of a [Spell] that remains on a [Unit] after the [Spell]
  *   has been cast.
@@ -187,6 +192,29 @@ namespace LuaAura
         uint8 amount = ALE::CHECKVAL<uint8>(L, 2);
         aura->SetStackAmount(amount);
         return 0;
+    }
+
+    /**
+     * Returns the calculated amount of one of this [Aura]'s effects.
+     *
+     * This is the live, current value — for a damage-absorb effect it is the
+     * absorb REMAINING, not the amount originally applied. Returns 0 if the
+     * aura has no effect at that index or the effect is disabled.
+     *
+     *     local remaining = target:GetAura(110028):GetEffectAmount(0)
+     *
+     * @param uint8 index = 0 : effect index, 0-2
+     * @return int32 amount
+     */
+    int GetEffectAmount(lua_State* L, Aura* aura)
+    {
+        uint8 index = ALE::CHECKVAL<uint8>(L, 2, 0);
+        if (index >= MAX_SPELL_EFFECTS)
+            return luaL_argerror(L, 2, "effect index out of range");
+
+        AuraEffect* eff = aura->GetEffect(index);
+        ALE::Push(L, eff ? eff->GetAmount() : 0);
+        return 1;
     }
 
     /**
