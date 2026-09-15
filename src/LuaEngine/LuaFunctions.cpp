@@ -1091,6 +1091,7 @@ ALERegister<Aura> AuraMethods[] =
     { "GetMaxDuration", &LuaAura::GetMaxDuration },
     { "GetAuraId", &LuaAura::GetAuraId },
     { "GetStackAmount", &LuaAura::GetStackAmount },
+    { "GetEffectAmount", &LuaAura::GetEffectAmount },
     { "GetOwner", &LuaAura::GetOwner },
     { "GetCharges", &LuaAura::GetCharges },
     { "IsPassive", &LuaAura::IsPassive },
